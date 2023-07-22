@@ -42,7 +42,7 @@ deployed on netlify
 command :-1. npm run build 
           2. npm run deploy 
 
-deploy link:-
+deploy link:-https://legendary-croquembouche-758790.netlify.app
 
 
 # Techstacks
