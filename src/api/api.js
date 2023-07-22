@@ -17,3 +17,7 @@ export const singleData=({id})=>{
 })
 }
 
+// to delte the data from the cart page we use delte function 
+
+
+

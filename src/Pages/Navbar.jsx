@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <Box
-      bg={useColorModeValue("#bca9d9")}
+      bg={colorMode === "light" ? "#bca9d9" : "gray.800"}
       px={4}
       position="sticky"
       top={0}
@@ -68,6 +68,9 @@ const Navbar = () => {
         <Box>
           <Button colorScheme="teal" variant="ghost" width="100%" my={2}>
             <Link to="/">ProductList</Link>
+          </Button>
+          <Button colorScheme="teal" variant="ghost" width="100%" my={2}>
+            <Link to="/cart">Cart</Link>
           </Button>
         </Box>
       )}

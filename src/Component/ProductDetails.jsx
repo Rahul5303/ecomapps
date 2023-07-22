@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { singleData } from "../api/api";
-import { Box, Button, Image, SimpleGrid, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Text, useToast, useMediaQuery } from "@chakra-ui/react";
 import Navbar from "../Pages/Navbar";
 
 const ProductDetails = () => {
   const [data, setData] = useState({});
 
-  const [quantity, setQuantity] = useState(1);
-
   const { id } = useParams();
 
-  // const params= useParams();
-  // console.log(params);
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  // Check if the screen size is mobile or tablet
+  const [isMobileOrTablet] = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     singleData({ id }) // singleData coming from api.js file
@@ -25,60 +26,74 @@ const ProductDetails = () => {
       });
   }, [id]);
 
-  // to chnage the quantity of the product 
+  const handleAddToCart = () => {
+    // Get the existing cart items from local storage or initialize an empty array
+    const existingCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 
-  const handleQuantityChange = (value) => {
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity + value));
+    // Check if the product is already in the cart
+    const isProductInCart = existingCartItems.some((item) => item.id === data.id);
+
+    if (isProductInCart) {
+      toast({
+        title: "Product already added to the cart!",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      // If the product is not in the cart, add it to the cart items array
+      const cartItem = {
+        id: data.id,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+      };
+      existingCartItems.push(cartItem);
+
+      // Save the updated cart items back to local storage
+      localStorage.setItem("cartItems", JSON.stringify(existingCartItems));
+
+      toast({
+        title: "Product added to the cart!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate("/cart");
+    }
   };
 
-   // Calculate total price based on quantity
-   const totalPrice = data.price * quantity;
-
-
-  // taking a button size and use break point value to chnage the size accoording that 
-
-  const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
   return (
     <Box>
-      {/* catch the data using map method */}
       <Navbar />
-      <SimpleGrid columns={[1, 2, 3, 4]} spacing={8} mt={8}>
+      <Flex flexWrap="wrap" justifyContent="space-between" mt={8}>
+        {/* Product Image */}
         <Image
           src={data.image}
           alt={data.name}
-          width="100%"
-          height="500px"
+          width={isMobileOrTablet ? "100%" : "50%"}
+          height={isMobileOrTablet ? "300px" : "500px"}
           objectFit="cover"
           borderRadius="md"
         />
 
-        <Text mt={2} fontSize="xl" fontWeight="semibold">
-          {data.name}
-        </Text>
-        <Text fontSize="lg">Price:₹{data.price}</Text>
-      </SimpleGrid>
-
-      {/* for adding the quantity of the product and according price will incarese or deccrease */}
-
-      <Box mt={4}>
-          <Button
-            size={buttonSize}
-            onClick={() => handleQuantityChange(-1)}
-            mr={2}
-            disabled={quantity === 1}
-          >
-            -
-          </Button>
-          <Text as="span" fontSize="lg" fontWeight="semibold" mx={2}>
-            {quantity}
+        {/* Product Details */}
+        <Box mt={isMobileOrTablet ? 4 : 0} ml={isMobileOrTablet ? 0 : 4} width={isMobileOrTablet ? "100%" : "40%"}>
+          <Text fontSize="xl" fontWeight="semibold" mb={2}>
+            {data.name}
           </Text>
-          <Button size={buttonSize} onClick={() => handleQuantityChange(1)} ml={2}>
-            +
+          <Text fontSize="lg">Price: ₹{data.price}</Text>
+          <Button
+            colorScheme="teal"
+            onClick={handleAddToCart}
+            mt={4}
+            width={isMobileOrTablet ? "100%" : "auto"}
+          >
+            Add to Cart
           </Button>
-          <Text mt={2} fontSize="lg">
-          Total Price: ₹{totalPrice}
-        </Text>
         </Box>
+      </Flex>
     </Box>
   );
 };
