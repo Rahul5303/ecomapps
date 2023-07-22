@@ -31,10 +31,12 @@ const Productlist = () => {
       data.map((item)=>{
         return <Box key={item.id}>
           {/* <LinkOverlay as={Link} to={`/products/${id}`}> */}
+          <Link to={`/products/${item.id}`}>
           <Image src={item.image} alt={item.name} width="100%"
                 height="500px"
                 objectFit="cover"
                 borderRadius="md" />
+                </Link>
           {/* </LinkOverlay> */}
           <Text mt={2} fontSize="xl" fontWeight="semibold">{item.name}</Text>
           <Text fontSize="lg">Price:₹{item.price}</Text>

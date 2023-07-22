@@ -8,3 +8,12 @@ export const getData=()=>{
       return res.json()
 })
 }
+// singleData function to get a data from the id after click on the product to getdata 
+
+export const singleData=({id})=>{
+    return fetch(`http://localhost:8000/products/${id}`)
+    .then((res)=>{
+      return res.json()
+})
+}
+
